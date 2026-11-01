@@ -14,7 +14,7 @@ namespace HM_Admin.Controllers
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/[controller]")] // Supports URL path versioning: api/v5/HMAdmin
-    [Route("api/[controller]")] // Supports Header/Query versioning: api/HMAdmin
+    //[Route("api/[controller]")] // Supports Header/Query versioning: api/HMAdmin
     public class HMAdminController : Controller
     {
         private readonly IConfiguration _configuration;
