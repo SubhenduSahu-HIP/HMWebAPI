@@ -28,12 +28,18 @@ namespace HM_Admin
             modelBuilder.Entity<AdminUser>(
                 entity =>
                 {
-                    entity.Property(e => e.UserFirstName).IsRequired().HasMaxLength(255);
-                    entity.Property(e => e.UserLastName).IsRequired().HasMaxLength(255);
-                    entity.HasIndex(e => e.UserEmail).IsUnique();
-                    entity.Property(e => e.UserEmail).IsRequired().HasMaxLength(255);
-                    entity.Property(e => e.UserMobile).IsRequired().HasMaxLength(10);
-                    entity.Property(e => e.UserPassword).IsRequired().HasMaxLength(255);
+                    entity.Property(e => e.FirstName).IsRequired().HasMaxLength(255);
+                    entity.Property(e => e.LastName).IsRequired().HasMaxLength(255);
+                    entity.HasIndex(e => e.Email).IsUnique();
+                    entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
+                    entity.Property(e => e.Mobile).IsRequired().HasMaxLength(10);
+                    entity.Property(e => e.Password).IsRequired().HasMaxLength(255);
+                    entity.Property(e => e.Role).IsRequired().HasMaxLength(255);
+                    entity.Property(e => e.IsAdmin).IsRequired().HasDefaultValue(false);
+                    entity.Property(e => e.CreatedBy).IsRequired().HasMaxLength(255);
+                    entity.Property(e => e.CreatedDate).IsRequired();
+                    entity.Property(e => e.ModifiedBy).IsRequired();
+                    entity.Property(e => e.ModifiedDate).IsRequired();
 
                 }
             );

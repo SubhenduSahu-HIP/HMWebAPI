@@ -1,6 +1,7 @@
 ﻿using HM_Admin.Models;
 using HM_Admin.Repositorys.IRepository;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
 
 namespace HM_Admin.Repositorys.Repository
 {
@@ -11,7 +12,7 @@ namespace HM_Admin.Repositorys.Repository
         {
 
             _context = dbContext;
-        }        
+        }
         public async Task<AdminUser> CreateAdminUser(AdminUser newAdminUser)
         {
             try
@@ -25,16 +26,26 @@ namespace HM_Admin.Repositorys.Repository
                 throw;
             }
         }
-        public async Task<IEnumerable<AdminUser>> GetAllUser()
+        public async Task<IEnumerable<AdminUser>> GetAllAdminUser()
         {
             try
             {
-                return await _context.AdminUser.ToListAsync();
+                var users = await _context.AdminUser
+                            .Where(u => u.IsAdmin == true && u.IsDeleted == false && u.Role == "Admin").ToListAsync();
+                return users;
             }
             catch (Exception ex)
             {
                 throw;
             }
+        }
+
+        public async Task<IEnumerable<AdminUser>> GetUserById(int userId)
+        {
+            var user = await _context.Database.SqlQuery<AdminUser>($"exec dbo.GetUserById @UserID ={userId}").ToListAsync();
+
+
+            return user;
         }
     }
 }
