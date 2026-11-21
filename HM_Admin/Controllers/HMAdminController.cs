@@ -10,10 +10,10 @@ using Microsoft.Extensions.Configuration;
 namespace HM_Admin.Controllers
 {
     [ApiController] // Adds default API behaviors
-   
+
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
-    [Route("api/v{version:apiVersion}/[controller]")] // Supports URL path versioning: api/v5/HMAdmin
+    //[Route("api/v{version:apiVersion}/[controller]")] // Supports URL path versioning: api/v5/HMAdmin
     //[Route("api/[controller]")] // Supports Header/Query versioning: api/HMAdmin
     public class HMAdminController : Controller
     {
@@ -27,7 +27,7 @@ namespace HM_Admin.Controllers
             _configuration = configuration;
         }
 
-        [MapToApiVersion("1.0")]
+        
         [MapToApiVersion("2.0")]
         [HttpPost("CreateAdminUser")]
         public async Task<IActionResult> CreatAdminUser([FromBody] AdminUser value)
@@ -43,11 +43,11 @@ namespace HM_Admin.Controllers
             {
                 return Ok(newAdminUser.UserId);//not correct return as ok
             }
-            
+
         }
 
         [MapToApiVersion("1.0")]
-        [HttpPost("CQRSImplementionCreateAdminUser")]
+        [HttpPost("CreateUser")]
         public async Task<IActionResult> CQRSImplementionCreatAdminUser([FromBody] AdminUser value)
         {
             // Send the command through MediatR pipeline
@@ -62,11 +62,22 @@ namespace HM_Admin.Controllers
         }
 
         [MapToApiVersion("1.0")]
-        [HttpGet("CQRSImplementionGetAdminUser")]
-        public async Task<IActionResult> GetAllUser()
+        [HttpGet("GetAdminUser")]
+        public async Task<IActionResult> CQRSImplementionGetAllAdminUser()
         {
             var allUsers = await _mediator.Send(new GetAllAdminUsersQuery());
             return Ok(allUsers);
+        }
+        [MapToApiVersion("1.0")]
+        [HttpGet("GetUserById")]
+        public async Task<IActionResult> CQRSImplementionGetUserById(int id)
+        {
+            var user = await _mediator.Send(new GetUserByIdQuery(id));
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
         }
     }
 }
