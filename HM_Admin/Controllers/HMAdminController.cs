@@ -68,6 +68,7 @@ namespace HM_Admin.Controllers
             var allUsers = await _mediator.Send(new GetAllAdminUsersQuery());
             return Ok(allUsers);
         }
+
         [MapToApiVersion("1.0")]
         [HttpGet("GetUserById")]
         public async Task<IActionResult> CQRSImplementionGetUserById(int id)
