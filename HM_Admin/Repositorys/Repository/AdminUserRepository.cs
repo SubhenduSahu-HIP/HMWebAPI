@@ -40,6 +40,17 @@ namespace HM_Admin.Repositorys.Repository
             }
         }
 
+        public async Task<IEnumerable<AdminUser>> GetAllUser()
+        {
+            var users = await _context.AdminUser
+                        .AsNoTracking()
+                        .Where(u => u.IsDeleted == false)
+                        .ToListAsync();
+
+            return users;
+
+        }
+
         public async Task<IEnumerable<AdminUser>> GetUserById(int userId)
         {
             var user = await _context.Database.SqlQuery<AdminUser>($"exec dbo.GetUserById @UserID ={userId}").ToListAsync();

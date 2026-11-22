@@ -21,11 +21,12 @@ namespace HM_Admin.CQRSImplementation
         }
     }
 
-    public record GetAllAdminUsersQuery() : IRequest<IEnumerable<AdminUser>>;
+    public record GetAllUsers(): IRequest<IEnumerable<AdminUser>>;
+    public record GetAllAdminUsers() : IRequest<IEnumerable<AdminUser>>;
     public record GetUserByIdQuery(int Id) : IRequest<IEnumerable<AdminUser>>;
 
     // 2. Define the Query Handler
-    public class GetAllAdminUsersQueryHandler : IRequestHandler<GetAllAdminUsersQuery, IEnumerable<AdminUser>>, IRequestHandler<GetUserByIdQuery, IEnumerable<AdminUser>>
+    public class GetAllAdminUsersQueryHandler : IRequestHandler<GetAllAdminUsers, IEnumerable<AdminUser>>, IRequestHandler<GetUserByIdQuery, IEnumerable<AdminUser>>, IRequestHandler<GetAllUsers, IEnumerable<AdminUser>>
     {
         private readonly IAdminUserRepository _repository;
 
@@ -35,7 +36,7 @@ namespace HM_Admin.CQRSImplementation
             _repository = repository;
         }
 
-        public async Task<IEnumerable<AdminUser>> Handle(GetAllAdminUsersQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<AdminUser>> Handle(GetAllAdminUsers request, CancellationToken cancellationToken)
         {
             // Call your repository method here safely
             return await _repository.GetAllAdminUser();
@@ -44,6 +45,11 @@ namespace HM_Admin.CQRSImplementation
         {
             // Call your other method from IAdminUserRepository
             return await _repository.GetUserById(request.Id);
+        }
+
+        public async Task<IEnumerable<AdminUser>> Handle(GetAllUsers request, CancellationToken cancellationToken)
+        {
+            return  await _repository.GetAllUser();
         }
     }
 }
