@@ -13,7 +13,7 @@ namespace HM_Admin.Controllers
 
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
-    //[Route("api/v{version:apiVersion}/[controller]")] // Supports URL path versioning: api/v5/HMAdmin
+    [Route("api/v{version:apiVersion}/[controller]")] // Supports URL path versioning: api/v5/HMAdmin
     //[Route("api/[controller]")] // Supports Header/Query versioning: api/HMAdmin
     public class HMAdminController : Controller
     {
@@ -27,7 +27,7 @@ namespace HM_Admin.Controllers
             _configuration = configuration;
         }
 
-        
+
         [MapToApiVersion("2.0")]
         [HttpPost("CreateAdminUser")]
         public async Task<IActionResult> CreatAdminUser([FromBody] AdminUser value)
@@ -45,7 +45,13 @@ namespace HM_Admin.Controllers
             }
 
         }
-
+        [MapToApiVersion("1.0")]
+        [HttpGet("GetAllUser")]
+        public async Task<IActionResult> CQRSImplementionGetAllUser()
+        {
+            var allUsers = await _mediator.Send(new GetAllUsers());
+            return Ok(allUsers);
+        }
         [MapToApiVersion("1.0")]
         [HttpPost("CreateUser")]
         public async Task<IActionResult> CQRSImplementionCreatAdminUser([FromBody] AdminUser value)
@@ -65,7 +71,7 @@ namespace HM_Admin.Controllers
         [HttpGet("GetAdminUser")]
         public async Task<IActionResult> CQRSImplementionGetAllAdminUser()
         {
-            var allUsers = await _mediator.Send(new GetAllAdminUsersQuery());
+            var allUsers = await _mediator.Send(new GetAllAdminUsers());
             return Ok(allUsers);
         }
 
