@@ -1,4 +1,5 @@
-﻿using HM_Admin.Models;
+﻿using Azure.Core;
+using HM_Admin.Models;
 using HM_Admin.Repositorys.IRepository;
 using MediatR;
 
@@ -51,5 +52,22 @@ namespace HM_Admin.CQRSImplementation
         {
             return  await _repository.GetAllUser();
         }
+    }
+
+    public record UpdateUserCommand(AdminUser AdminUser) : IRequest<AdminUser>;
+    public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, AdminUser>
+    {
+        private readonly IAdminUserRepository _repository;
+
+        public UpdateUserCommandHandler(IAdminUserRepository repository)
+        {
+            _repository = repository;
+        }
+
+        public async Task<AdminUser?> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+        {
+            return await _repository.UpdateUser(request.AdminUser);
+        }
+
     }
 }

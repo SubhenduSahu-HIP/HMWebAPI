@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System.Net;
 
 namespace HM_Admin.Controllers
 {
@@ -86,5 +87,17 @@ namespace HM_Admin.Controllers
             }
             return Ok(user);
         }
+        [MapToApiVersion("1.0")]
+        [HttpPut("UpdateUser")]
+        public async Task<IActionResult> CQRSImplementionUpdateUser(AdminUser userDetails)
+        {
+            var user = await _mediator.Send( new UpdateUserCommand(userDetails));
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return StatusCode((int)HttpStatusCode.OK, user);
+        }
+
     }
 }

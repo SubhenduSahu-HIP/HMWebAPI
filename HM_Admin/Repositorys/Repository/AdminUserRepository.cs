@@ -1,6 +1,7 @@
 ﻿using HM_Admin.Models;
 using HM_Admin.Repositorys.IRepository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Runtime.InteropServices;
 
 namespace HM_Admin.Repositorys.Repository
@@ -57,6 +58,45 @@ namespace HM_Admin.Repositorys.Repository
 
 
             return user;
+        }
+
+        public async Task<AdminUser?> UpdateUser(AdminUser user)
+        {
+
+            try
+            {
+                var existingUser =
+                                     (!string.IsNullOrWhiteSpace(user.Email)
+                                      ? await _context.AdminUser.FirstOrDefaultAsync(u => u.Email == user.Email)
+                                     : null)
+                                        ?? (!string.IsNullOrWhiteSpace(user.Mobile)
+                                         ? await _context.AdminUser.FirstOrDefaultAsync(u => u.Mobile == user.Mobile)
+                                      : null);
+
+                if (existingUser == null)
+                {
+                    return null;
+                }
+
+                existingUser.FirstName = user.FirstName;
+                existingUser.LastName = user.LastName;
+                existingUser.Mobile = user.Mobile;
+                // existingUser.Password = user.Password;
+                existingUser.Address = user.Address;
+                existingUser.Role = user.Role;
+                existingUser.Email=user.Email;
+                // existingUser.IsAdmin = user.IsAdmin;
+                existingUser.ModifiedBy = user.ModifiedBy;
+                existingUser.ModifiedDate = DateTime.Now;
+                await _context.SaveChangesAsync();
+
+                return existingUser;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
     }
 }
