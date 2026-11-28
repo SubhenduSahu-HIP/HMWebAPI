@@ -52,13 +52,37 @@ namespace HM_Admin.Repositorys.Repository
 
         }
 
+        public async Task<IEnumerable<AdminUser>> GetUserByEmailAndPassword(string email, string password)
+        {
+
+            try
+            {
+                var user = await _context.AdminUser
+                            .Where(u => u.Email == email && u.Password == password && u.IsDeleted == false)
+                            .AsNoTracking()
+                            .ToListAsync();
+                return user;
+            }
+            catch (Exception ex)
+                        {
+                throw new Exception(ex.Message);
+            }
+            
+        }
+
         public async Task<IEnumerable<AdminUser>> GetUserById(int userId)
         {
-            var user = await _context.Database.SqlQuery<AdminUser>($"exec dbo.GetUserById @UserID ={userId}").ToListAsync();
-
-
-            return user;
+            try
+            {
+                var user = await _context.Database.SqlQuery<AdminUser>($"exec dbo.GetUserById @UserID ={userId}").ToListAsync();
+                return user;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
+
 
         public async Task<AdminUser?> UpdateUser(AdminUser user)
         {
@@ -81,11 +105,11 @@ namespace HM_Admin.Repositorys.Repository
                 existingUser.FirstName = user.FirstName;
                 existingUser.LastName = user.LastName;
                 existingUser.Mobile = user.Mobile;
-                // existingUser.Password = user.Password;
+                existingUser.Password = user.Password;
                 existingUser.Address = user.Address;
                 existingUser.Role = user.Role;
                 existingUser.Email=user.Email;
-                // existingUser.IsAdmin = user.IsAdmin;
+                existingUser.IsAdmin = user.IsAdmin;
                 existingUser.ModifiedBy = user.ModifiedBy;
                 existingUser.ModifiedDate = DateTime.Now;
                 await _context.SaveChangesAsync();

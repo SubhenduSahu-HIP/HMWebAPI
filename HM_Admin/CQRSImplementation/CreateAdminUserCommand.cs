@@ -25,9 +25,14 @@ namespace HM_Admin.CQRSImplementation
     public record GetAllUsers(): IRequest<IEnumerable<AdminUser>>;
     public record GetAllAdminUsers() : IRequest<IEnumerable<AdminUser>>;
     public record GetUserByIdQuery(int Id) : IRequest<IEnumerable<AdminUser>>;
+    public record GetUserByEmailAndPassword(string Email,string Password): IRequest<IEnumerable<AdminUser>>;
 
     // 2. Define the Query Handler
-    public class GetAllAdminUsersQueryHandler : IRequestHandler<GetAllAdminUsers, IEnumerable<AdminUser>>, IRequestHandler<GetUserByIdQuery, IEnumerable<AdminUser>>, IRequestHandler<GetAllUsers, IEnumerable<AdminUser>>
+    public class GetAllAdminUsersQueryHandler : IRequestHandler<GetAllAdminUsers,IEnumerable<AdminUser>>, 
+        IRequestHandler<GetUserByIdQuery, IEnumerable<AdminUser>>, 
+        IRequestHandler<GetAllUsers, IEnumerable<AdminUser>>,
+        IRequestHandler<GetUserByEmailAndPassword, IEnumerable<AdminUser>>
+
     {
         private readonly IAdminUserRepository _repository;
 
@@ -51,6 +56,11 @@ namespace HM_Admin.CQRSImplementation
         public async Task<IEnumerable<AdminUser>> Handle(GetAllUsers request, CancellationToken cancellationToken)
         {
             return  await _repository.GetAllUser();
+        }
+
+        public async Task<IEnumerable<AdminUser>> Handle(GetUserByEmailAndPassword request, CancellationToken cancellationToken)
+        {
+            return await _repository.GetUserByEmailAndPassword(request.Email, request.Password);
         }
     }
 

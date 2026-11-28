@@ -11,13 +11,14 @@ using System.Reflection;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using HM_Admin.Filters;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Replace the Key Vault configuration section with the following code:
 
-#region create Key vault client
+#region create Key vault client and connect to Azure key valut
 //var secretClient = new SecretClient(
 //    new Uri("https://babukeyvaulttest.vault.azure.net/"),
 //    new DefaultAzureCredential());
@@ -26,19 +27,19 @@ var builder = WebApplication.CreateBuilder(args);
 #endregion
 
 // 1. Define a unique string for the policy name
-var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+//var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 // 1. Add the CORS service and define a policy
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: myAllowSpecificOrigins,
-        policy =>
-        {
-            //policy.WithOrigins("http://localhost:5174") // Your frontend URL
-            policy.AllowAnyOrigin()//allowing all domain
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
-});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy(name: myAllowSpecificOrigins,
+//        policy =>
+//        {
+//            //policy.WithOrigins("http://localhost:5174") // Your frontend URL
+//            policy.AllowAnyOrigin()//allowing all domain
+//                  .AllowAnyHeader()
+//                  .AllowAnyMethod();
+//        });
+//});
 // 1. Add CORS services and define an "AllowAll" policy
 builder.Services.AddCors(options =>
 {
@@ -66,7 +67,8 @@ builder.Services.AddDbContext<HMAdminDBContext>(options =>
 builder.Services.AddHMAdminServices();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
-builder.Services.AddControllers();
+builder.Services.AddControllers(option=>option.Filters.Add<ApiResponseStatusCodeFilter>());
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 #region  Configure the API Versioning Engine correctly (using Asp.Versioning)
@@ -123,7 +125,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // 3. Enable CORS middleware (Must be placed before MapControllers)
-app.UseCors(myAllowSpecificOrigins);
+app.UseCors("AllowAllOrigins");
 
 app.UseHttpsRedirection();
 
